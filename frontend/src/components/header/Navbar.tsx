@@ -1,39 +1,64 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { IoIosSearch } from "react-icons/io";
 import { FaShoppingCart } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
+import { IoMenuOutline } from "react-icons/io5";
 
 const Navbar = () => {
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [scrollThreshold] = useState(5);
+
+  const handleScroll = () => {
+    if (typeof window !== "undefined") {
+      if (window.scrollY > lastScrollY + scrollThreshold) {
+        setShowNavbar(false);
+      } else if (window.scrollY < lastScrollY - scrollThreshold) {
+        setShowNavbar(true);
+      }
+      setLastScrollY(window.scrollY);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex flex-row justify-between items-center outline outline-1 outline-zinc-300 py-4 font-bold bg-white">
-      <div className="flex flex-row">
-        <Link href="/" className="px-5 mr-10">
-          <span>Shop</span>
-          <span className="text-emerald-400">Quik</span>
-        </Link>
-        <div className="relative flex flex-row items-center mr-40">
-          <div className="relative w-[30em]">
-            <IoIosSearch className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-500" />
-            <input
-              className="text-sm outline outline-1 rounded-xl w-full px-2 py-1"
-              type="text"
-              placeholder="Search..."
-            ></input>
-          </div>
-        </div>
+    <header
+      className={`bg-black z-50 fixed top-0 left-0 right-0 flex flex-row justify-between items-center outline outline-1 outline-zinc-800 py-6 px-10 font-bold text-zinc-100 transition-transform duration-300 ${
+        showNavbar ? "transform translate-y-0" : "transform -translate-y-full"
+      }`}
+    >
+      {/* Search */}
+      <div className="w-1/3">
+        <button className="flex items-center justify-center p-1 rounded-md hover:bg-zinc-900">
+          <IoMenuOutline className="size-6" />
+          <p>Menu</p>
+        </button>
       </div>
-      <div className="flex flex-row">
-        <Link href="/cart" className="flex flex-col items-center">
-          <FaShoppingCart />
-          <span className="text-bold px-30">Cart</span>
-        </Link>
-        <Link href="/profile" className="flex flex-col items-center px-10">
-          <CgProfile />
-          <span className="text-bold">Profile</span>
+
+      {/* Home */}
+      <div className="flex justify-center w-1/3">
+        <Link href="/" className="text-2xl">
+          Shop<span className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500">Quik</span>
         </Link>
       </div>
-    </div>
+
+      {/* Navigation */}
+      <div className="flex flex-row gap-10 w-1/3 justify-end">
+        <Link href="/cart" className="rounded-md hover:bg-zinc-900 p-1">
+          <FaShoppingCart className="size-6" />
+        </Link>
+        <Link href="/profile" className="rounded-md hover:bg-zinc-900 p-1">
+          <CgProfile className="size-6" />
+        </Link>
+      </div>
+    </header>
   );
 };
 

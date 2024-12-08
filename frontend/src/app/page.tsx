@@ -1,19 +1,24 @@
-"use client"
-
-import Image from "next/image";
+"use client";
 import Navbar from "../components/header/Navbar";
-import { ProductCards } from "@/components/products/ProductCards";
+import Hero from "../components/hero/Hero";
+import ProductCards from "@/components/products/ProductCards";
+import Footer from "@/components/footer/Footer";
+
 
 const Home = () => {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen text-white">
       <Navbar />
-      <section className="px-44 py-32">
-        <div className="flex flex-col gap-10">
-          <ProductCards title={"Produce"} />
-          <ProductCards title={"Meat"} />
-        </div>
+      <Hero />
+
+      <section id="store" className="p-28 flex flex-col gap-10">
+        {[...Array(6)].map((_, i) => (
+          <div key={i}>
+            <ProductCards />
+          </div>
+        ))}
       </section>
+      <Footer />
     </main>
   );
 };

@@ -1,14 +1,12 @@
-import { BiRadar } from "react-icons/bi";
-
 const Footer = () => {
   return (
-    <footer className="bg-inherit">
+    <footer className="bg-inherit bottom-0">
       <div className="max-w-full mx-7">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-12 border-b border-gray-700">
           {/* Logo and About */}
           <div>
             <h3 className="text-lg font-semibold mb-4">ShopQuik</h3>
-            <p className="text-sm text-green-900">
+            <p className="text-sm text-violet-900">
               Delivering quality food and innovative solutions <br /> for a
               better diet since 1936.
             </p>
@@ -77,7 +75,7 @@ const Footer = () => {
               />
               <button
                 type="submit"
-                className="bg-emerald-600 px-4 py-2 rounded-r-md text-sm font-medium hover:bg-emerald-700"
+                className="bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 px-4 py-2 rounded-r-md text-sm font-medium hover:bg-emerald-700"
               >
                 Subscribe
               </button>
