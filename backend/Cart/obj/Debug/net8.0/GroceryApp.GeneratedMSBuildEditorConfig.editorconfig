@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = GroceryApp
-build_property.ProjectDir = C:\Users\1kidc\Source\Repos\GroceryStore\backend\Cart\
+build_property.ProjectDir = /Users/morenzo/GroceryStore/backend/Cart/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

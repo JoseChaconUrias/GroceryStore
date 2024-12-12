@@ -13,6 +13,14 @@ namespace Product
     {
       return _productEngine.GetProductById(productId);
     }
+    public Product GetProductByName(string Name)
+    {
+      return _productEngine.GetProductByName(Name);
+    }
+    public List<Product> GetProductByCategory(int categoryId)
+    {
+      return _productEngine.GetProductByCategory(categoryId);
+    }
 
     public List<Product> GetAllProducts()
     {
@@ -22,16 +30,6 @@ namespace Product
     public bool UpdateProductStock(int productId, int stock)
     {
       return _productEngine.UpdateProductStock(productId, stock);
-    }
-
-    public bool ApplyDiscountToProduct(int productId, double discountPercentage)
-    {
-      return _productEngine.ApplyDiscountToProduct(productId, discountPercentage);
-    }
-
-    public List<Product> GetDiscountedProducts()
-    {
-      return _productEngine.GetDiscountedProducts();
     }
   }
 }

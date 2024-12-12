@@ -1,7 +1,6 @@
 namespace Product
 {
 
-
   using Microsoft.AspNetCore.Mvc;
   using System.Collections.Generic;
   using System.Threading.Tasks;
@@ -12,14 +11,13 @@ namespace Product
   {
     private readonly IProductManager _productManager;
 
-    // Constructor for Dependency Injection
     public ProductController(IProductManager productManager)
     {
       _productManager = productManager;
     }
 
-    // GET: api/product/{id}
-    [HttpGet("{id}")]
+    // GET: api/product/id/{id}
+    [HttpGet("id/{id}")]
     public IActionResult GetProductById(int id)
     {
       Console.WriteLine($"Getting product by ID: {id}");
@@ -31,6 +29,36 @@ namespace Product
       return Ok(product);
     }
 
+    // GET : api/product/name/{name}
+    [HttpGet("name/{name}")]
+    public IActionResult GetProductByName(string name) 
+    {
+        try
+        {
+            Console.WriteLine($"Getting product by Name: {name}");
+            var product = _productManager.GetProductByName(name);
+            if (product == null)
+            {
+                return NotFound("Product not found.");
+            }
+            return Ok(product);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error occurred: {ex.Message}");
+            return StatusCode(500, "An error occurred while processing your request.");
+        }
+    }
+
+    // GET: api/product/category/{id}
+    [HttpGet("category/{id}")]
+    public IActionResult GetProductByCategory(int id) 
+    {
+      Console.WriteLine($"Getting product by Category: {id}");
+      var products = _productManager.GetProductByCategory(id);
+      return Ok(products);
+    }
+    
     // GET: api/product
     [HttpGet]
     public IActionResult GetAllProducts()
@@ -50,18 +78,6 @@ namespace Product
       }
       return Ok("Stock updated successfully.");
     }
-
-    // PUT: api/product/apply-discount
-    [HttpPut("apply-discount")]
-    public IActionResult ApplyDiscountToProduct([FromBody] ApplyDiscountRequest request)
-    {
-      var success = _productManager.ApplyDiscountToProduct(request.ProductId, request.Discount);
-      if (!success)
-      {
-        return BadRequest("Failed to apply discount.");
-      }
-      return Ok("Discount applied successfully.");
-    }
   }
 
   // Request models for updating stock and discount
@@ -71,9 +87,4 @@ namespace Product
     public int Stock { get; set; }
   }
 
-  public class ApplyDiscountRequest
-  {
-    public int ProductId { get; set; }
-    public double Discount { get; set; }
-  }
 }

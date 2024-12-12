@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // example connection string 
-string connectionString = "Server=tcp:localhost;Database=master;User Id=SA;Password=MyStrongPass123;TrustServerCertificate=True;";
+string connectionString = "Server=tcp:localhost;Database=GroceryStoreTest;User Id=SA;Password=MyStrongPass123;TrustServerCertificate=True;";
 
 // registering  repository with the connection string.
 builder.Services.AddScoped<IProductRepository>(sp =>
