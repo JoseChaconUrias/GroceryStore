@@ -1,6 +1,6 @@
 namespace User
 {
-    public interface IUserAccessor
+    public interface IUserEngine
     {
         public User GetUserById(int userId);
         bool CreateUser(User user);

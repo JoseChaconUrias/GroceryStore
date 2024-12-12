@@ -1,95 +1,106 @@
-using System.Data.SqlClient;
+namespace User {
+    using System.Data.SqlClient;
 
-public class UserRepository : IUserRepository
-{
-    private readonly string _connectionString;
-
-    public UserRepository(string connectionString)
+    public class UserRepository : IUserRepository
     {
-        _connectionString = connectionString;
-    }
-
-    public UserRepository GetUserById(int id)
-    {
-        using (var connection = new SqlConnection(_connectionString))
+        private string _connectionString;
+        public UserRepository(string connectionString)
         {
-            connection.Open();
-            var query = "SELECT * FROM Users WHERE UserID = @Id";
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+            _connectionString = connectionString;
+        }
+
+        public User GetUserById(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                cmd.Parameters.AddWithValue("@UserID", id);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                connection.Open();
+
+                string query = "SELECT * FROM Users WHERE UserId = @UserId";
+
+                using (SqlCommand cmd = new SqlCommand(query, connection))
                 {
-                    if (reader.read())
+                    cmd.Parameters.AddWithValue("@UserId", id);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        return new User
+                        if (reader.read())
                         {
-                            id = (int)reader["UserID"],
-                            username = reader["Username"].ToString(),
-                            description = reader["Description"].ToString(),
-                            password = reader["PasswordHash"].ToString(),
-                            email = reader["Email"].ToString()
+                            return new User
+                            {
+                                id = reader.GetInt32(reader.GetOrdinal("UserId")),
+                                username = reader.IsDBNull(reader.GetOrdinal("Username")) ? string.Empty : reader.GetString(reader.GetOrdinal("Username")),
+                                password = reader.IsDBNull(reader.GetOrdinal("PasswordHash")) ? string.Empty : reader.GetString(reader.GetOrdinal("PasswordHash")),
+                                phoneNumber = reader.IsDBNull(reader.GetOrdinal("PhoneNumber")) ? string.Empty : reader.GetString(reader.GetOrdinal("PhoneNumber")),
+                                email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString(reader.GetOrdinal("Email")),
+                            }
                         }
                     }
                 }
             }
+            throw new InvalidOperationException($"No user found with ID {id}.");
         }
-        return null;
-    }
 
-    public UserRepository CreateUser(User user)
-    {
-        using (var connection = new SqlConnection(_connectionString))
+        public bool CreateUser(User user)
         {
+            User check = GetUserById(user.id);
+            if (check != null)
+            {
+                throw new InvalidOperationException($"User already exists with ID {user.id}.");
+            }
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
 
-            var query = @"INSERT INTO Users (Username, PasswordHash, Email) 
-                          VALUES (@Username, @PasswordHash @Email);
+                var query = @"INSERT INTO Users (Username, PasswordHash, Email, PhoneNumber) 
+                          VALUES (@Username, @PasswordHash @Email, PhoneNumber);
                           SELECT CAST(SCOPE_IDENTITY() as int)";
-            using (SqlCommand cmd = new SqlCommand(query, connection))
-            {
-                connection.Open();
-                connection.Parameters.AddWithValue("@Username", user.username);
-                connection.Parameters.AddWithValue("@PasswordHash", user.password);
-                connection.Parameters.AddWithValue("@Email", user.email);
-                connection.ExecuteNonQuery();
-                connection.Close();
-                return;
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    cmd.Parameters.AddWithValue("@Username", user.username);
+                    cmd.Parameters.AddWithValue("@PasswordHash", user.password);
+                    cmd.Parameters.AddWithValue("@Email", user.email);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Close();
+                    return rowsAffected > 0;
+                }
             }
         }
-    }
 
-    public UserRepository UpdateUser(int id, User user)
-    {
-        using (var connection = new SqlConnection(_connectionString))
+        public bool UpdateUser(int id, User user)
         {
-            var query = @"UPDATE Users SET Username = @Username, PasswordHash = @PasswordHash, Email = @Email 
-                          WHERE Id = @Id";
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+            using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Open();
-                connection.Parameters.AddWithValue("@Username", user.username);
-                connection.Parameters.AddWithValue("@PasswordHash", user.password);
-                connection.Parameters.AddWithValue("@Email", user.email);
-                connection.Parameters.AddWithValue("@Id", id);
-                connection.ExecuteNonQuery();
-                connection.Close();
-                return;
+                var query = @"UPDATE Users SET Username = @Username, PasswordHash = @PasswordHash, Email = @Email, PhoneNumber = @PhoneNumber
+                          WHERE UserId = @UserId";
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    cmd.Parameters.AddWithValue("@Username", user.username);
+                    cmd.Parameters.AddWithValue("@PasswordHash", user.password);
+                    cmd.Parameters.AddWithValue("@Email", user.email);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", user.phoneNumber);
+                    cmd.Parameters.AddWithValue("@UserId", id);
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Close();
+                    return rowsAffected > 0;
+                }
             }
         }
-    }
 
-    public UserRepository DeleteUser(int id)
-    {
-        using (var connection = new SqlConnection(_connectionString))
+        public bool DeleteUser(int id)
         {
-            var query = "DELETE FROM Users WHERE UserID = @Id";
-            using (SqlCommand cmd = new SqlCommand(query, connection))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                connection.Open();
-                connection.Parameters.AddWithValue("@Id", id);
-                connection.ExecuteNonQuery();
-                connection.Close();
-                return;
+                var query = "DELETE FROM Users WHERE UserId = @UserId";
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    cmd.Parameters.AddWithValue("@UserId", id);
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Close();
+                    return rowsAffected > 0;
+                }
             }
         }
     }

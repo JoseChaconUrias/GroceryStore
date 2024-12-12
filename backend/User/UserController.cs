@@ -1,60 +1,63 @@
-using Microsoft.AspNetCore.Mvc;
-
-[Route("api/[controller]")]
-[ApiController]
-public class UserController : ControllerBase
+namespace User
 {
-    private readonly UserRepository _userRepository;
+    using Microsoft.AspNetCore.Mvc;
 
-    public UserController(UserRepository userRepository)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UserController : ControllerBase
     {
-        _userRepository = userRepository;
-    }
+        private readonly UserRepository _userRepository;
 
-    [HttpGet("{userId}")]
-    public User GetUser(int id)
-    {
-        User user = await _userRepository.GetUserById(id);
-        if (user == null)
+        public UserController(UserRepository userRepository)
         {
-            Console.WriteLine("Unable to Create User.");
+            _userRepository = userRepository;
         }
-        return user;
-    }
 
-    [HttpPost]
-    public void CreateUser(User user)
-    {
-        user.PasswordHash = HashPassword(user.PasswordHash);
-        int userId = await _userRepository.CreateUser(user);
-        return;
-    }
-
-    [HttpPut("{userId}")]
-    public void UpdateUser(int id, User user)
-    {
-        user.PasswordHash = HashPassword(user.PasswordHash);
-        bool success = await _userRepository.UpdateUser(id, user);
-        if (!success)
+        [HttpGet("{userId}")]
+        public User GetUser(int id)
         {
-            Console.WriteLine("Unable to Update User.");
+            User user = await _userRepository.GetUserById(id);
+            if (user == null)
+            {
+                Console.WriteLine("Unable to Create User.");
+            }
+            return user;
         }
-        return;
-    }
 
-    [HttpDelete("{userId}")]
-    public void DeleteUser(int id)
-    {
-        bool success = await _userRepository.DeleteUser(id);
-        if (!success)
+        [HttpPost]
+        public void CreateUser(User user)
         {
-            Console.WriteLine("Unable to Delete User.");
+            user.PasswordHash = HashPassword(user.PasswordHash);
+            int userId = await _userRepository.CreateUser(user);
+            return;
         }
-        return;
-    }
 
-    private string HashPassword(string password)
-    {
-        return BCrypt.Net.BCrypt.HashPassword(password);
+        [HttpPut("{userId}")]
+        public void UpdateUser(int id, User user)
+        {
+            user.PasswordHash = HashPassword(user.PasswordHash);
+            bool success = await _userRepository.UpdateUser(id, user);
+            if (!success)
+            {
+                Console.WriteLine("Unable to Update User.");
+            }
+            return;
+        }
+
+        [HttpDelete("{userId}")]
+        public void DeleteUser(int id)
+        {
+            bool success = await _userRepository.DeleteUser(id);
+            if (!success)
+            {
+                Console.WriteLine("Unable to Delete User.");
+            }
+            return;
+        }
+
+        private string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
     }
 }

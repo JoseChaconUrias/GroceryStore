@@ -1,9 +1,10 @@
-using System.Data.SqlClient;
-
-public interface IUserRepository
+namespace User
 {
-    void CreateUser(User user);
-    void UpdateUser(int id, User user);
-    void DeleteUser(int id);
-    public User GetUserById(int id);
+    public interface IUserRepository
+    {
+        public User GetUserById(int userId);
+        bool CreateUser(User user);
+        bool UpdateUser(int id, User user);
+        bool DeleteUser(int id);
+    }
 }
