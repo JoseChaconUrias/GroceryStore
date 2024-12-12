@@ -1,79 +1,97 @@
-using Microsoft.AspNetCore.Mvc;
-
-[Route("api/[controller]")]
-[ApiController]
-public class CartController : ControllerBase
+namespace Cart
 {
-    private ICartRepository _cartRepository;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
-    public CartAccessor(ICartRepository cartRepository)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CartController : ControllerBase
     {
-        _cartRepository = cartRepository;
-    }
+        private readonly ICartManager _cartManager;
 
-    
-    public Cart getUserCart(string userId)
-    {
-        User user = await _cartRepository[HttpGet("{userId}")].GetUserById(userId);
-        if (user == null)
+        // Constructor for Dependency Injection
+        public CartController(ICartManager cartManager)
         {
-            Console.WriteLine("Unable to Create User.");
+            _cartManager = cartManager;
         }
-        return user;
-    }
 
-    [HttpGet("{cartId}/{product}/{amount}")]
-    async void addToCart(int cartId, Product product, int amount)
-    {
-        bool success = await _cartRepository.addToCart(cartId, product, amount);
-        if (!success)
+        // GET: api/product/{cartId}
+        [HttpGet("{cartId}")]
+        public IActionResult getUserCart(int cartId)
         {
-            Console.WriteLine("Unable to add to cart");
+            Console.WriteLine($"Getting Cart by ID : {cartId}")
+            var cart = _cartManager.getUserIdCart(cartId);
+            if (cart == null)
+            {
+                Console.WriteLine("Unable to locate Cart.");
+            }
+            return OK(cart);
         }
-        return;
-    }
 
-    [HttpGet("{cartId}/{product}")]
-    void removeFromCart(int cartId, Product product)
-    {
-        bool success = await _cartRepository.removeFromCart(cartId, product);
-        if (!success)
+        // GET: api/cart/cartId
+        // GET: api/product
+        // GET: api/cart/amount
+        [HttpGet("{cartId}/{product}/{amount}")]
+        public IActionResult addToCart(int cartId, Product product, int amount)
         {
-            Console.WriteLine("Unable to remove from cart");
+            bool success = _cartManager.addToCart(cartId, product, amount);
+            if (!success)
+            {
+                Console.WriteLine("Unable to add to cart");
+            }
+            return Ok(success);
         }
-        return;
-    }
 
-    [HttpGet("{cartId}/{product}/{amount}")]
-    void updateAmount(int cartId, Product product, int amount)
-    {
-        bool success = await _cartRepository.updateAmount(cartId, product, amount);
-        if (!success)
+        // GET: api/cart/cartId
+        // GET: api/product
+        [HttpGet("{cartId}/{product}")]
+        public IActionResult removeFromCart(int cartId, Product product)
         {
-            Console.WriteLine("Unable to update amount in cart");
+            bool success = _cartManager.removeFromCart(cartId, product);
+            if (!success)
+            {
+                Console.WriteLine("Unable to remove from cart");
+            }
+            return Ok(success);
         }
-        return;
-    }
 
-    [HttpGet("{cart}")]
-    void initiateCart(Cart cart)
-    {
-        bool success = await _cartRepository.initiateCart(cart);
-        if (!success)
+        // GET: api/cart/cartId
+        // GET: api/product
+        // GET: api/cart/amount
+        [HttpGet("{cartId}/{product}/{amount}")]
+        public IActionResult updateAmount(int cartId, Product product, int amount)
         {
-            Console.WriteLine("Unable to initiate cart");
+            bool success = _cartManager.updateAmount(cartId, product, amount);
+            if (!success)
+            {
+                Console.WriteLine("Unable to update amount in cart");
+            }
+            return Ok(success);
         }
-        return;
-    }
 
-    [HttpGet("{cartId}")]
-    void clearCart(int cartId)
-    {
-        bool success = await _cartRepository.clearCart(cartId);
-        if (!success)
+        // GET: api/cart
+        [HttpGet("{cart}")]
+        public IActionResult initiateCart(Cart cart)
         {
-            Console.WriteLine("Unable to clear cart");
+            bool success = _cartManager.initiateCart(cart);
+            if (!success)
+            {
+                Console.WriteLine("Unable to initiate cart");
+            }
+            return Ok(success);
         }
-        return;
+
+        // GET: api/cart/cartId
+        [HttpGet("{cartId}")]
+        public IActionResult clearCart(int cartId)
+        {
+            bool success = _cartManager.clearCart(cartId);
+            if (!success)
+            {
+                Console.WriteLine("Unable to clear cart");
+            }
+            return Ok(success);
+        }
     }
 }

@@ -1,7 +1,10 @@
-public class Cart
-{
-    public int cartId { get; set; }
-    public string userId { get; set;
-    public SortedDictionary<Product, int> itemList { get; set;}
-    public double totalPrice { get; set; }
+namespace Cart {
+
+    public class Cart
+    {
+        public required int cartId { get; set; }
+        public required int userId { get; set; }
+        public required SortedDictionary<int, int> itemList { get; set; }
+        public required double totalPrice { get; set; }
+    }
 }

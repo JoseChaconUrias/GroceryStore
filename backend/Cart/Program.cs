@@ -1,26 +1,35 @@
-using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Cart;
 
-public class Program
-{
-    public void Main(string[] args)
-    {
-        string connectionString = "";
+var builder = WebApplication.CreateBuilder(args);
 
-        int id = 0;
 
-        ICartRepository cartRepository = new CartRepository(connectionString);
+// example connection string 
+string connectionString = "Server=tcp:localhost;Database=master;User Id=SA;Password=MyStrongPass123;TrustServerCertificate=True;";
 
-        ICartAccessor cartAccessor = new CartAccessor(cartRepository);
+// registering  repository with the connection string.
+builder.Services.AddScoped<ICartRepository>(sp =>
+  new ProductRepository(connectionString));
 
-        Cart cart = cartAccessor.getUserCart(id);
+// registering accessor, which depends on the repository.
+builder.Services.AddScoped<ICartAccessor, CartAccessor>();
 
-        if (cart != null)
-        {
-            Console.WriteLine($"CartID: {cart.cartId}, UserID: {cart.userId}, itemList: {cart.itemList}, Price: {cart.totalPrice}");
-        }
-        else
-        {
-            Console.WriteLine("Cart not found.");
-        }
-    }
-}
+// register the engine layer (business logic)
+builder.Services.AddScoped<ICartEngine, CartEngine>();
+
+// registering the manager layer (coordinates the logic)
+builder.Services.AddScoped<ICartManager, CartManager>();
+
+// adding controllers (API layer)
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+app.MapControllers();
+
+// Run the application
+app.Run();

@@ -1,17 +1,22 @@
 namespace Cart
 {
-    public class CartAccessor : ICartAccessor
+    public class CartEngine : ICartEngine
     {
         private readonly ICartRepository _cartRepository;
 
-        public CartAccessor(ICartRepository cartRepository)
+        public CartEngine(ICartRepository cartRepository)
         {
             _cartRepository = cartRepository;
         }
 
-        public Cart getUserCart(int ucartId)
+        public Cart getUserCart(int cartId)
         {
-            return _cartRepository.getUserCart(cartId);
+            var cart = _cartRepository.getUserCart(cartId);
+            if (cart == null)
+            {
+                throw new ArgumentException($"No cart found with user ID {cartId}");
+            }
+            return cart;
         }
 
         bool addToCart(int cartId, Product product, int amount)
@@ -61,7 +66,5 @@ namespace Cart
             }
 
             return _cartRepository.clearCart(cartId);
-            
         }
-    }
 }

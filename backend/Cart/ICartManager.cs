@@ -1,6 +1,6 @@
 namespace Cart
 {
-    public interface ICartRepository
+    public interface ICartManager
     {
         Cart getUserCart(int cartId);
         bool addToCart(int cartId, Product product, int amount);
