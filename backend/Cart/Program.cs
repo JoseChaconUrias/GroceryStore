@@ -12,7 +12,7 @@ string connectionString = "Server=tcp:localhost;Database=master;User Id=SA;Passw
 
 // registering  repository with the connection string.
 builder.Services.AddScoped<ICartRepository>(sp =>
-  new ProductRepository(connectionString));
+  new CartRepository(connectionString));
 
 // registering accessor, which depends on the repository.
 builder.Services.AddScoped<ICartAccessor, CartAccessor>();
