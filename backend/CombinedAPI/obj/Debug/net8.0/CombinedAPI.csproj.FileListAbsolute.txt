@@ -152,3 +152,4 @@
 /Users/josechacon/School/SoftEng/GroceryStore/backend/CombinedAPI/obj/Debug/net8.0/CombinedAPI.pdb
 /Users/josechacon/School/SoftEng/GroceryStore/backend/CombinedAPI/obj/Debug/net8.0/CombinedAPI.genruntimeconfig.cache
 /Users/josechacon/School/SoftEng/GroceryStore/backend/CombinedAPI/obj/Debug/net8.0/ref/CombinedAPI.dll
+/Users/josechacon/School/SoftEng/GroceryStore/backend/CombinedAPI/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll

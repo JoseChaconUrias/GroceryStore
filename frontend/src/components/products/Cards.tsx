@@ -33,7 +33,7 @@ const Cards = async (categoryId: { categoryId: number }) => {
           className="bg-zinc-950 p-5 rounded-xl min-w-[250px] flex-shrink-0 transition-transform transform hover:scale-105"
         >
           <Image
-            src={"/img/dummy_img/apple.jpg" || product.images}
+            src={product.images === "image.jpg" ?  "/img/thedog2.jpeg" : product.images || "/img/thedog2.jpeg"}
             alt="Honeycrisp Apple"
             width={300}
             height={300}
